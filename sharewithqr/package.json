@@ -1,0 +1,16 @@
+{
+  "name": "sharewithapp",
+  "version": "0.1.0",
+  "main": "App.js",
+  "scripts": {
+    "start": "expo start"
+  },
+  "dependencies": {
+    "expo": "~49.0.0",
+    "expo-camera": "~13.4.0",
+    "expo-file-system": "~15.4.0",
+    "react": "18.2.0",
+    "react-native": "0.72.4",
+    "zlib": "^1.0.5"
+  }
+}
