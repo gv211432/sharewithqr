@@ -11,7 +11,7 @@ export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>ShareWithApp</Text>
+        <Text style={styles.headerText}>ShareWithQR</Text>
         <TouchableOpacity onPress={() => setScreen(screen === 'scan' ? 'downloads' : 'scan')}>
           <MaterialIcons name={screen === 'scan' ? 'folder' : 'camera-alt'} size={28} color="#333" />
         </TouchableOpacity>

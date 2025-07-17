@@ -25,17 +25,29 @@ export default function Scanner() {
   if (hasPermission === null) {
     return <View style={styles.center}><Text>Requesting camera permission...</Text></View>;
   }
+
   if (hasPermission === false) {
-    return <View style={styles.center}><Text>No access to camera</Text></View>;
+    return <View style={styles.center}>
+      <Text style={{
+        marginBottom: 10,
+      }}>No access to camera</Text>
+
+      {/* Request Permision */}
+      <Button title="Grant Permission" onPress={() => Camera.requestCameraPermissionsAsync()} />
+    </View>;
   }
 
   return (
     <View style={{ flex: 1 }}>
+
+      {/* If neither scanning nor scaned */}
       {!scanning && !done && (
         <View style={styles.center}>
           <Button title="Start Scanning" onPress={() => setScanning(true)} />
         </View>
       )}
+
+      {/* If scannig */}
       {scanning && (
         <View style={{ flex: 1 }}>
           <CameraView
@@ -55,6 +67,8 @@ export default function Scanner() {
           </View>
         </View>
       )}
+
+      {/* If scanning is completed */}
       {done && (
         <View style={styles.center}>
           <Text>
@@ -78,22 +92,28 @@ export default function Scanner() {
           </View>
         </View>
       )}
-      <View style={styles.status}>
-        <Text>Chunks scanned: {chunkCounter}/{totalChunks || '?'}</Text>
+
+      {/* If scannig */}
+      {scanning && <View style={styles.status}>
+        <Text>QRs scanned: {chunkCounter}/{totalChunks || '?'}</Text>
         <Text>File name: {fileName}</Text>
-      </View>
+        <Text>File size: {fileSize || 'Unknown'}</Text>
+      </View>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  overlay: { flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 40 },
-  text: { color: 'black', fontSize: 18, marginBottom: 10 },
+  overlay: {
+    flex: 1, backgroundColor: 'transparent',
+    justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 40
+  },
+  text: { color: 'red', fontSize: 18, marginBottom: 10 },
   textBorder: {
     textShadowColor: '#fff',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 5,
+    textShadowRadius: 1,
   },
   status: { padding: 10, backgroundColor: '#eee' },
 });

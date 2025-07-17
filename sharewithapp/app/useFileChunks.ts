@@ -4,7 +4,7 @@ import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import pako from 'pako';
 import { Buffer } from 'buffer';
-import { getDownloadDir, openFile } from './utils/fileUtils';
+import { getDownloadDir } from './utils/fileUtils';
 
 export default function useFileChunks() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -79,7 +79,7 @@ export default function useFileChunks() {
     }
   };
 
-  const saveFile = async () => {
+  const getDecompressedData = () => {
     try {
       const orderedChunks = [];
       for (let i = 0; i < (totalChunks || 0); i++) {
@@ -93,11 +93,27 @@ export default function useFileChunks() {
       }
       const base64Data = orderedChunks.join('');
       const compressedData = Buffer.from(base64Data, 'base64');
-      let fileData;
-      try {
-        fileData = pako.ungzip(compressedData);
-      } catch (e) {
-        Alert.alert('Decompression failed', 'Could not decompress file.');
+      return pako.ungzip(compressedData);
+    } catch (error) {
+      console.error('Decompression error:', error);
+      Alert.alert('Decompression failed', 'Could not decompress file.');
+      return null; // Handle decompression error    
+    }
+  };
+
+  const saveFile = async () => {
+    try {
+      const fileData = getDecompressedData();
+      if (!fileData) {
+        resetAll();
+        alertActiveRef.current = true;
+        setTotalChunks(null);
+        setFileName('<file_name>');
+        setFileSize(null);
+        setChunkCounter(0);
+        setDone(false);
+        lastIndexRef.current = -1;
+        chunksRef.current = {};
         return;
       }
       const fileUri = APP_DOWNLOADS_DIR + fileName;
@@ -106,7 +122,7 @@ export default function useFileChunks() {
       resetAll();
     } catch (e: any) {
       resetAll();
-      Alert.alert('Save failed');
+      Alert.alert('Save failed', `Could not save file: ${fileName}`);
     }
   };
 
